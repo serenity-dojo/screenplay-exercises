@@ -18,8 +18,8 @@ public class ViewTheAvailableTickets implements Task {
     @Override
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
-                Enter.theValue(departureStation).into(TicketTypeForm.DEPARTURE).thenHit(Keys.ARROW_DOWN, Keys.TAB),
-                Enter.theValue(destinationStation).into(TicketTypeForm.DESTINATION).thenHit(Keys.ARROW_DOWN, Keys.TAB),
+                Enter.theValue(departureStation).into(TicketTypeForm.FROM).thenHit(Keys.ARROW_DOWN, Keys.TAB),
+                Enter.theValue(destinationStation).into(TicketTypeForm.TO).thenHit(Keys.ARROW_DOWN, Keys.TAB),
                 Click.on(TicketTypeForm.BUY_TICKETS)
 
         );
