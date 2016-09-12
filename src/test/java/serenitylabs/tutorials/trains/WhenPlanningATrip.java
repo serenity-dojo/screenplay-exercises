@@ -43,8 +43,8 @@ public class WhenPlanningATrip {
 
         // THEN
         tracy.should(
-                seeThat("the departure station", TheOutboundJourneySummary.origin(), is("London Paddington")),
-                seeThat("the destination station", TheOutboundJourneySummary.destination(), is("Oxford"))
+                seeThat(TheOutboundJourneySummary.origin(), is("London Paddington")),
+                seeThat(TheOutboundJourneySummary.destination(), is("Oxford"))
         );
     }
 }

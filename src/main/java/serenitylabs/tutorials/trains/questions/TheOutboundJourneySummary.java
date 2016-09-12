@@ -1,16 +1,16 @@
 package serenitylabs.tutorials.trains.questions;
 
 import net.serenitybdd.screenplay.Question;
-import net.serenitybdd.screenplay.questions.Text;
+import net.serenitybdd.screenplay.questions.targets.TheTarget;
 import serenitylabs.tutorials.trains.ui.OutboundJourneySummary;
 
 
 public class TheOutboundJourneySummary {
     public static Question<String> origin() {
-        return actor -> Text.of(OutboundJourneySummary.ORIGIN).viewedBy(actor).asString();
+        return TheTarget.textOf(OutboundJourneySummary.ORIGIN);
     }
 
     public static Question<String> destination() {
-        return actor -> Text.of(OutboundJourneySummary.DESTINATION).viewedBy(actor).asString();
+        return TheTarget.textOf(OutboundJourneySummary.DESTINATION);
     }
 }
