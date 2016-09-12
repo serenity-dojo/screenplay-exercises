@@ -1,4 +1,4 @@
 /**
- * Our fantastic Vet Clinic app starts here
+ * Source directory structure
  **/
  package serenitylabs.tutorials.trains;
