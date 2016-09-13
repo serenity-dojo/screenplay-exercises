@@ -1,5 +1,16 @@
 package serenitylabs.tutorials.trains.ui;
 
 public enum MainMenu {
-    BuyTickets
+    BuyTickets("https://buytickets.southwesttrains.co.uk/journey"),
+    GetTravelAssistance("https://www.southwesttrains.co.uk/contact--help/contact-us/assisted-travel-form/");
+
+    private final String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    MainMenu(String url) {
+        this.url = url;
+    }
 }

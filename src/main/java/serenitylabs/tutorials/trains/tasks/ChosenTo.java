@@ -5,23 +5,31 @@ import net.serenitybdd.screenplay.Performable;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.Open;
 import net.thucydides.core.annotations.Step;
-import serenitylabs.tutorials.trains.ui.BuyTicketsPage;
+import serenitylabs.tutorials.trains.ui.MainMenu;
 
 import static net.serenitybdd.screenplay.Tasks.instrumented;
 
 public class ChosenTo implements Task {
 
-    public static Performable bookATicket() {
-        return instrumented(ChosenTo.class);
-    }
-
-    private BuyTicketsPage theBuyTicketsPage;
+    private final MainMenu menuChoice;
 
     @Override
     @Step("{0} chooses to book a ticket")
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
-                Open.browserOn(theBuyTicketsPage)
+                Open.url(menuChoice.getUrl())
         );
+    }
+
+    public ChosenTo(MainMenu menuChoice) {
+        this.menuChoice = menuChoice;
+    }
+
+    public static Performable bookATicket() {
+        return instrumented(ChosenTo.class, MainMenu.BuyTickets);
+    }
+
+    public static Performable requestAssistedTravel() {
+        return instrumented(ChosenTo.class, MainMenu.GetTravelAssistance);
     }
 }
