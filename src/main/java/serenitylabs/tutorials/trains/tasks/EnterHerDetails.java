@@ -23,7 +23,7 @@ public class EnterHerDetails implements Task{
     @Override
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
-                SelectFromOptions.byVisibleText("Dr").from(AssistedTravelPage.TITLE),
+                SelectFromOptions.byVisibleText(title).from(AssistedTravelPage.TITLE),
                 Enter.theValue(firstName + " " + lastName).into(AssistedTravelPage.FULL_NAME)
         );
     }
