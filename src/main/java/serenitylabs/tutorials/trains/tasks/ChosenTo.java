@@ -14,7 +14,7 @@ public class ChosenTo implements Task {
     private final MainMenu menuChoice;
 
     @Override
-    @Step("{0} chooses to book a ticket")
+    @Step("{0} chooses to #menuChoice")
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
                 Open.url(menuChoice.getUrl())
@@ -31,5 +31,9 @@ public class ChosenTo implements Task {
 
     public static Performable requestAssistedTravel() {
         return instrumented(ChosenTo.class, MainMenu.GetTravelAssistance);
+    }
+
+    public static Performable checkTheLiveUpdates() {
+        return instrumented(ChosenTo.class, MainMenu.CheckForLiveUpdates);
     }
 }

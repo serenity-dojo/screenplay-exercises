@@ -110,4 +110,5 @@ public class WhenPlanningATrip {
                 seeThat(the(AssistedTravelPage.TITLE), containsSelectOption("Other"))
         );
     }
+
 }

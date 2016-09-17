@@ -6,107 +6,116 @@ In this series of exercises, we will be building up a test suite for a real-worl
 
 ## Problem definition
 
-The aim of these scenarios is to check the default values proposed on the 'Buy Tickets' screen.
+The aim of these scenarios is to work with timeouts and asynchronous waits. You will be adding a test to check that the number of General Updates displayed matches the total count displayed
 
-### Step 1 - Checking text elements
+### Step 1 - Implement the "Given" stage of the test
 
-Write a test that checks that 'Buy tickets' appears in the heading above the form.
+Complete the `general_updates_should_be_available()` test in the `WhenCheckingForLiveUpdates` test class. The aim of this test is to check that you can click on the toggle button for the General Updates and display a list of updates:
 
-![The 'Buy Tickets' form](src/documentation/images/buy-tickets.png)
+[General updates](src/documentation/images/live-updates-general-list.png)
 
-Add a new `Target` to the `TypeTicketForm` class, e.g.
+In this test, write a `givenThat()` clause to open the Live Updates page:
 
-    public static final Target HEADING = Target.the("Buy Tickets Heading").locatedBy(".planner__title");
+        givenThat(tracy).has(ChosenTo.checkTheLiveUpdates());
 
-Now check that the text element contains the text "Buy tickets", e.g.
+### Step 2 - Implement the "When" stage of the test
 
-        tracy.should(
-                seeThat(the(TicketTypeForm.HEADING), containsText("Buy tickets"))
-        );
+Record the current value of the General Updates badge, e.g.
+
+       int generalUpdateBadgeCount = Text.of(LiveUpdates.GENERAL_UPDATE_BADGE) 
+                                         .viewedBy(tracy).asInteger(); 
+
+Add the `GENERAL_UPDATE_BADGE` constant to the `LiveUpdates` class, e.g. 
+
+    public static final Target GENERAL_UPDATE_BADGE = Target.the("General updates badge").locatedBy("#general_updatesCount");
+
+Now add the `when` clause:
+
+        when(tracy).attemptsTo(ViewTheLiveUpdates.forGeneralUpdates());
+
+The existing `ViewTheLiveUpdates` class is no longer adequate, and needs to be refactored to cater for multiple update types.
+
+Add an enum called `UpdateTypes`:
+
+    public enum UpdateType {
+        LineUpdates, GeneralUpdates
+    }
+
+Add a field of type `UpdateType' to the ViewTheLiveUpdates class, assigned in the constructor:
+
+    public ViewTheLiveUpdates(UpdateType updateType) {
+        this.updateType = updateType;
+    }
+
+    private final UpdateType updateType;
         
-### Step 2 - Checking visibility
-        
-Add an assertion to the `sensible_default_trip_options_are_proposed` test to check that this element is visible, e.g.
+Refactor `LiveUpdates` to use a map from `UpddateType` to `Target`, e.g.
 
-        tracy.should(
-                seeThat(the(TicketTypeForm.HEADING), isCurrentlyVisible())
+    public class LiveUpdates {
+    
+        public static final Target LINE_UPDATE_BADGE = Target.the("Line update badge").locatedBy("#line_updatesCount");
+
+        private static Map<UpdateType, Target> UPDATE_TOGGLES = new HashMap<>();
+        private static Map<UpdateType, Target> UPDATE_MESSAGES = new HashMap<>();
+        static {
+            UPDATE_TOGGLES.put(UpdateType.LineUpdates, Target.the("Line updates button").locatedBy("//span[contains(.,'Line Updates')]"));
+            UPDATE_TOGGLES.put(UpdateType.GeneralUpdates, Target.the("General updates button").locatedBy("//span[contains(.,'General Updates')]"));
+    
+            UPDATE_MESSAGES.put(UpdateType.LineUpdates, Target.the("Line updates").locatedBy("#line_updates .incident"));
+            UPDATE_MESSAGES.put(UpdateType.GeneralUpdates, Target.the("General updates").locatedBy("#general_updates .incident"));
+        }
+    
+        public static Target toggleForUpdatesOfType(UpdateType updateType) {
+            return UPDATE_TOGGLES.get(updateType);
+        }
+    
+        public static Target messagesForUpdatesOfType(UpdateType updateType) {
+            return UPDATE_MESSAGES.get(updateType);
+        }
+    }
+
+
+Refactor the `performAs` method in `ViewTheLiveUpdates` to use the new map-backed methods:
+    
+    @Override
+    @Step("{0} views the live updates for #updateType")
+    public <T extends Actor> void performAs(T actor) {
+        actor.attemptsTo(
+                Click.on(LiveUpdates.toggleForUpdatesOfType(updateType))
         );
+    }    
 
-### Step 3 - checking attributes
+Refactor the `TheLiveUpdateIncidents` class to use the new map=backed methods:
 
-Check that the placeholder for the 'From' field is equal to 'From'. You can do this by checking the `placeholder` attribute with the `TheTarget.attributeNamed()` method, e.g.
+    public class TheLiveUpdateIncidents {
+        public static Question<List<String>> forLineUpdates() {
+            return actor -> Text.of(LiveUpdates.messagesForUpdatesOfType(UpdateType.LineUpdates)).viewedBy(actor).asList();
+        }
+    }
+    
 
-        tracy.should(
-                seeThat(
-                        TheTarget.attributeNamed("placeholder").forTarget(TicketTypeForm.FROM),
-                        equalTo("From")
+Implement the new `forGeneralUpdates()` method:
+    
+    public static Performable forGeneralUpdates() {
+        return Instrumented.instanceOf(ViewTheLiveUpdates.class).withProperties(GeneralUpdates);
+    }
+
+### Step 3 - Implement the "Then" stage of the test
+
+Check that the total number of general update messages displayed should equal the number in the badge. Cater for the time it takes to fully display the list. e.g.
+
+        then(tracy).should(
+                eventually(
+                        seeThat("the number of general updates messages",
+                                theTotalNumberOf(LiveUpdateIncidents.forGeneralUpdates()),
+                                equalTo(generalUpdateBadgeCount))
                 )
         );
 
-### Step 4 - checking CSS values
+Implement the `LiveUpdateIncidents.forGeneralUpdates()` method using a lambda expression, e.g.
 
-Check that the font of the heading is Sans Serif. You can do this by checking the `font` css attribute with the `TheTarget.attributeNamed()` method, e.g.
-
-        tracy.should(
-                seeThat(
-                        TheTarget.cssValueNamed("font").forTarget(TicketTypeForm.HEADING),
-                        containsString("sans-serif")
-                )
-        );
-
-### Step 5 - checking selected values
-
-In the `request_assisted_travel()` test, add a check to make sure that 'Dr' is selected in the title list using the `selectedValueOf` method, e.g.
- 
-         tracy.should(
-                 seeThat(selectedValueOf(AssistedTravelPage.TITLE), is("Dr"))
-         );
-
-
-### Step 6 - checking select options
-
-In the `request_assisted_travel()` test, check the available options in the Title dropdown using the `selectOptionsOf` method, e.g.
-
-         tracy.should(
-                seeThat(selectOptionsOf(AssistedTravelPage.TITLE), hasItems("Mr","Miss","Mrs","Dr","Other"))
-         );
-         
-Now use the `containsSelectOption` matcher to check that the list contains 'Other', e.g.
-
-         tracy.should(
-                seeThat(the(AssistedTravelPage.TITLE), containsSelectOption("Other"))
-         );
-
-### Step 7 - Checking for disabled fields.
-
-The Return date/time field (see below) is disabled unless the 'Return' button is clicked. Write a test to ensure that the return date is initially disabled, and is enabled when the user chooses the Return option.
-
-![The 'Buy Tickets' form](src/documentation/images/disabled-date.png)
-
-First, add a Target for the return date field to the `TicketTypeForm` class, e.g.
-
-    public static final Target RETURN_TIME = Target.the("Inbound time").located(By.name("InboundTime"));
-
-Next, create a new test called `return_date_should_be_only_enabled_for_return_trips()` and check that, when the Buy Ticket page is opened, the return type is disabled, e.g.
-
-        tracy.has(ChosenTo.bookATicket());
-
-        tracy.should(
-                seeThat(the(TicketTypeForm.RETURN_TIME), not(isEnabled()))
-        );
-
-Now get Tracy to click on the `Return` button and check that the return date is enabled. On this page, the `Return` radio button is actually hidden, so you need to click on the return label instead. Add a target that identifies this label, e.g.
-
-    public static final Target RETURN_LABEL = Target.the("Return trip").locatedBy("//label[text()='Return']");
-
-Add an interaction to get Tracy to click on this label, and then check that the return time is now enabled, e.g.
-
-
-        tracy.attemptsTo(
-                Click.on(TicketTypeForm.RETURN_LABEL)
-        );
-
-        tracy.should(
-                seeThat(the(TicketTypeForm.RETURN_TIME), isEnabled())
-        );
-
+    public static Question<List<String>> forGeneralUpdates() {
+        return actor -> Text.of(LiveUpdates.messagesForUpdatesOfType(UpdateType.GeneralUpdates)).viewedBy(actor).asList();
+    }
+    
+### Step 4 - Repeat this exercise for Station Updates and Train Cancellations
