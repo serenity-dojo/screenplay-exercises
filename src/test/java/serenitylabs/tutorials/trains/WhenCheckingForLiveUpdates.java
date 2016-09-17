@@ -52,19 +52,6 @@ public class WhenCheckingForLiveUpdates {
 
     @Test
     public void general_updates_should_be_available() {
-        givenThat(tracy).has(ChosenTo.checkTheLiveUpdates());
-
-        int generalUpdateBadgeCount = Text.of(LiveUpdates.GENERAL_UPDATE_BADGE)
-                .viewedBy(tracy).asInteger();
-
-        when(tracy).attemptsTo(ViewTheLiveUpdates.forGeneralUpdates());
-
-        then(tracy).should(
-                eventually(
-                        seeThat("the number of general updates messages",
-                                theTotalNumberOf(LiveUpdateIncidents.forGeneralUpdates()),
-                                equalTo(generalUpdateBadgeCount))
-                )
-        );
+        // TODO
     }
 }
