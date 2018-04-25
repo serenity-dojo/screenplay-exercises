@@ -8,6 +8,6 @@ import org.junit.runner.RunWith;
 public class WhenPlanningATrip {
 
     @Test
-    public void booking_a_simple_trip() {
+    public void planning_a_simple_trip() {
     }
 }
