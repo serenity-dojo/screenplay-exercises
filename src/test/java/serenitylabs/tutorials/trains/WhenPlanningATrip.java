@@ -22,7 +22,7 @@ public class WhenPlanningATrip {
     Actor carrie = Actor.named("Carrie");
 
     @Test
-    public void planning_a_simple_trip() {
+    public void the_TFL_page_title_should_be_visible() {
         carrie.can(BrowseTheWeb.with(browser));
 
         carrie.attemptsTo(Open.url("https://tfl.gov.uk"));
