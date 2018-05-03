@@ -8,18 +8,14 @@ import net.serenitybdd.screenplay.actions.Enter;
 import net.serenitybdd.screenplay.actions.Open;
 import net.serenitybdd.screenplay.actions.SelectFromOptions;
 import net.serenitybdd.screenplay.questions.page.TheWebPage;
+import net.serenitybdd.screenplay.questions.targets.TheTarget;
 import net.thucydides.core.annotations.Managed;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import serenitylabs.tutorials.trains.questions.SearchResults;
-import serenitylabs.tutorials.trains.questions.TheContactDetails;
-import serenitylabs.tutorials.trains.questions.TheServiceLines;
-import serenitylabs.tutorials.trains.ui.ContactForm;
-import serenitylabs.tutorials.trains.ui.HelpAndContacts;
-import serenitylabs.tutorials.trains.ui.TFLHomePage;
+import serenitylabs.tutorials.trains.ui.*;
 
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static org.hamcrest.Matchers.*;
@@ -60,7 +56,7 @@ public class WhenPlanningATrip {
                 Enter.theValue("Waterloo").into(TFLHomePage.SEARCH).thenHit(Keys.ENTER)
         );
 
-        carrie.should(seeThat(SearchResults.heading(), equalTo("Search: Waterloo")));
+        carrie.should(seeThat(TheTarget.textOf(SearchResultsPage.SEARCH_RESULTS_HEADING), equalTo("Search: Waterloo")));
     }
 
     @Test
@@ -70,7 +66,7 @@ public class WhenPlanningATrip {
                 Click.on(STATUS_UPDATES.menuOption())
         );
 
-        carrie.should(seeThat(TheServiceLines.displayed(), hasItems("Bakerloo", "Circle","Central")));
+        carrie.should(seeThat(TheTarget.textValuesOf(StatusUpdatePage.SERVICE_LINES), hasItems("Bakerloo", "Circle","Central")));
     }
 
 
@@ -92,9 +88,9 @@ public class WhenPlanningATrip {
         );
 
         carrie.should(
-                seeThat(TheContactDetails.title(), equalTo("Mrs")),
-                seeThat(TheContactDetails.firstName(), equalTo("Sarah-Jane")),
-                seeThat(TheContactDetails.lastName(), equalTo("Smith"))
+                seeThat(TheTarget.selectedValueOf(ContactForm.TITLE), equalTo("Mrs")),
+                seeThat(TheTarget.valueOf(ContactForm.FIRST_NAME), equalTo("Sarah-Jane")),
+                seeThat(TheTarget.valueOf(ContactForm.LAST_NAME), equalTo("Smith"))
         );
     }
 }
