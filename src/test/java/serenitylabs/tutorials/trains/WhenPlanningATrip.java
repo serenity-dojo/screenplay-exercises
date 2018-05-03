@@ -6,7 +6,6 @@ import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Open;
 import net.serenitybdd.screenplay.questions.page.TheWebPage;
-import net.serenitybdd.screenplay.questions.targets.TheTarget;
 import net.thucydides.core.annotations.Managed;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,14 +15,15 @@ import serenitylabs.tutorials.trains.questions.SearchResults;
 import serenitylabs.tutorials.trains.questions.TheContactDetails;
 import serenitylabs.tutorials.trains.questions.TheServiceLines;
 import serenitylabs.tutorials.trains.tasks.EnterContactDetails;
+import serenitylabs.tutorials.trains.tasks.ProvideFeedback;
 import serenitylabs.tutorials.trains.tasks.Search;
 import serenitylabs.tutorials.trains.tasks.SelectMenu;
-import serenitylabs.tutorials.trains.ui.ContactForm;
 import serenitylabs.tutorials.trains.ui.HelpAndContacts;
 import serenitylabs.tutorials.trains.ui.TFLHomePage;
 
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static org.hamcrest.Matchers.*;
+import static serenitylabs.tutorials.trains.model.FeedbackSubject.TheOysterApp;
 import static serenitylabs.tutorials.trains.ui.MenuBar.HELP_AND_CONTACTS;
 import static serenitylabs.tutorials.trains.ui.MenuBar.STATUS_UPDATES;
 
@@ -74,10 +74,7 @@ public class WhenPlanningATrip {
 
         carrie.attemptsTo(
                 SelectMenu.option(HELP_AND_CONTACTS),
-                Click.on(HelpAndContacts.AboutOyster.TFLApp)
-        );
-
-        carrie.attemptsTo(
+                ProvideFeedback.about(TheOysterApp),
                 EnterContactDetails.forCustomer("Mrs","Sarah-Jane","Smith")
         );
 
