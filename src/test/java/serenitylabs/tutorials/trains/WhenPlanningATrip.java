@@ -32,13 +32,12 @@ public class WhenPlanningATrip {
     public void setTheStage() {
         carrie.can(BrowseTheWeb.with(browser));
 
-        carrie.attemptsTo(
-                Open.browserOn().the(TFLHomePage.class)
-        );
     }
 
     @Test
     public void the_TFL_page_title_should_be_visible() {
+
+        carrie.attemptsTo(Open.browserOn().the(TFLHomePage.class));
 
         carrie.should(
                 seeThat(
