@@ -6,6 +6,4 @@ import net.thucydides.core.annotations.DefaultUrl;
 import org.openqa.selenium.By;
 
 @DefaultUrl("https://tfl.gov.uk")
-public class TFLHomePage extends PageObject {
-    public static final Target SEARCH = Target.the("Search field").located(By.id("q"));
-}
+public class TFLHomePage extends PageObject {}
